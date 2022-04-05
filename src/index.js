@@ -1,13 +1,14 @@
 const express = require('express');
 const cors = require('cors');
 const WorkerCon = require('./workerpool/controller')
-
+const os = require('os');
 const {
     genrateHash
 } = require('./util');
 const port = process.env.PORT || 4004;
-process.env.UV_THREADPOOL_SIZE = 2;
+process.env.UV_THREADPOOL_SIZE = os.cpus().length;
 
+let iot = os.cpus().length;
 
 
 const app = express();
@@ -34,8 +35,8 @@ app.get('/', async (req, res) => {
 
 const Worker = async () => {
     const options = {
-        minWorkers: 2,
-        maxWorkers: 2
+        minWorkers: iot,
+        maxWorkers: 16
     }
     await WorkerCon.init(options);
 
